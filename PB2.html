@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>22s Surprise .o.</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    min-height:100vh;
+    background:linear-gradient(45deg,#ff9a9e,#fecfef,#f6d365);
+    background-size:400% 400%;
+    animation:bg 6s ease infinite;
+    overflow:hidden;
+}
+@keyframes bg{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+button{
+    margin:6px;
+    padding:12px 25px;
+    border-radius:25px;
+    border:none;
+    background:rgba(255,255,255,0.3);
+    color:white;
+    cursor:pointer;
+}
+
+/* MUSIC */
+.music-btn{
+    position:fixed;
+    top:15px;
+    right:15px;
+    z-index:50;
+}
+
+/* MAIN */
+.main{
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.card{
+    background:rgba(255,255,255,0.2);
+    backdrop-filter:blur(10px);
+    padding:30px;
+    border-radius:20px;
+    text-align:center;
+    color:white;
+    width:90%;
+    max-width:350px;
+}
+.photo-frame{
+    width:120px;height:120px;
+    margin:auto;
+    border-radius:15px;
+    overflow:hidden;
+    border:4px solid rgba(255,255,255,0.5);
+}
+.photo-frame img{width:100%;height:100%;object-fit:cover}
+
+/* SLIDESHOW */
+.gallery{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+    backdrop-filter:blur(6px);
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    z-index:10;
+}
+.gallery.active{display:flex}
+
+.slide{
+    width:240px;height:320px;
+    background:rgba(255,255,255,0.2);
+    padding:8px;
+    border-radius:20px;
+    animation:slideIn .6s;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+@keyframes slideIn{
+    from{transform:translateX(120px);opacity:0}
+    to{transform:translateX(0);opacity:1}
+}
+
+.slide img{
+    width:100%;height:100%;
+    object-fit:cover;
+    border-radius:15px;
+    cursor:pointer;
+}
+
+.gift-slide{
+    font-size:5rem;
+    cursor:pointer;
+    animation:pulse 1.5s infinite;
+}
+@keyframes pulse{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.15)}
+    100%{transform:scale(1)}
+}
+
+.text{margin:15px;text-align:center}
+
+/* SURPRISE */
+.surprise{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle,#ffb6c1,#ff69b4);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    color:white;
+    z-index:30;
+    animation:zoomOut 1s forwards;
+    padding:20px;
+}
+@keyframes zoomOut{
+    from{transform:scale(1.4);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+/* HEART */
+.heart{
+    position:fixed;
+    width:20px;height:20px;
+    background:pink;
+    clip-path:polygon(
+        50% 0%,61% 35%,98% 35%,68% 57%,
+        79% 91%,50% 70%,21% 91%,32% 57%,
+        2% 35%,39% 35%
+    );
+    animation:explode 3s forwards;
+    z-index:40;
+}
+@keyframes explode{
+    0%{transform:scale(0) translateY(0);opacity:1}
+    100%{transform:scale(1.5) translateY(-100vh);opacity:0}
+}
+</style>
+</head>
+
+<body>
+
+<button class="music-btn" id="musicBtn">🎵</button>
+
+<!-- MAIN -->
+<div class="main">
+    <div class="card">
+        <div class="photo-frame">
+            <img src="image/img4.jpg">
+        </div>
+        <h2>Happy Birthday SweetieDimsum🌹</h2>
+        <p>Tap for ZINGGG ✨</p>
+        <button id="openGallery">GALLERY 📸</button>
+    </div>
+</div>
+
+<!-- SLIDESHOW -->
+<div class="gallery" id="gallery">
+    <div class="slide" id="slideBox"></div>
+    <div class="text" id="slideText"></div>
+    <div>
+        <button id="nextBtn">⏭️</button>
+        <button id="backBtn">⏮️</button>
+    </div>
+</div>
+
+<!-- SURPRISE -->
+<div class="surprise" id="surprise">
+    <div>
+        <h1>🏵️ For Ann 🌹</h1>
+        <p>
+            You are my safe place<br>
+            Thank you for being born<br>
+            Hope you stay yourself forever<br>
+            Sorry for the surprise being so mean to you but I hope you like it<br>
+            hehe<br>
+        </p>
+        <button onclick="closeSurprise()">CLOSE</button>
+    </div>
+</div>
+
+<script>
+// ================= MUSIC =================
+const mainMusic = new Audio("music/123.mp3");
+const surpriseMusic = new Audio("music/fav.mp3");
+mainMusic.loop = true;
+surpriseMusic.loop = true;
+let playing = false;
+
+musicBtn.onclick = e => {
+    if(playing){
+        mainMusic.pause();
+        e.target.textContent="🎵";
+    }else{
+        mainMusic.play();
+        e.target.textContent="⏸️";
+    }
+    playing=!playing;
+};
+
+// ================= DATA =================
+const photos=[
+ "image/img1.jpg","image/img2.jpg","image/img3.jpg",
+ "image/img7.jpg","image/img5.jpg","image/img6.jpg",
+ "image/img8.jpg","image/img9.jpg","image/img11.jpeg"
+];
+const texts=[
+ "15/03/25",
+ "12/06/25",
+ "04/10/25",
+ "23/12/25",
+ "27/11/25",
+ "20/12/25",
+ "23/12/25",
+ "12/06/25",
+ "03/04/25",
+ "tap the 🎁"
+];
+
+let index=0;
+const slideBox=document.getElementById("slideBox");
+const slideText=document.getElementById("slideText");
+
+function updateSlide(){
+ slideBox.innerHTML="";
+ slideBox.style.animation="none";
+ slideBox.offsetHeight;
+ slideBox.style.animation="slideIn .6s";
+
+ if(index < photos.length){
+    const img=document.createElement("img");
+    img.src=photos[index];
+    img.onclick=openFullscreen;
+    slideBox.appendChild(img);
+ }else{
+    const gift=document.createElement("div");
+    gift.className="gift-slide";
+    gift.innerText="🎁";
+    gift.onclick=openSurprise;
+    slideBox.appendChild(gift);
+ }
+ slideText.textContent=texts[index]||"Tap the gift 🎁";
+}
+updateSlide();
+
+// OPEN GALLERY
+openGallery.onclick=()=>gallery.classList.add("active");
+
+// NEXT
+nextBtn.onclick=()=>{
+ if(index < photos.length){
+    index++;
+    updateSlide();
+ }
+};
+
+// BACK
+backBtn.onclick=()=>gallery.classList.remove("active");
+
+// SURPRISE
+function openSurprise(){
+ gallery.classList.remove("active");
+ mainMusic.pause();
+ surpriseMusic.play();
+ document.getElementById("surprise").style.display="flex";
+ heartExplosion();
+}
+
+function closeSurprise(){
+ document.getElementById("surprise").style.display="none";
+ surpriseMusic.pause();
+ if(playing) mainMusic.play();
+}
+
+// HEART EXPLOSION
+function heartExplosion(){
+ for(let i=0;i<25;i++){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.style.left=Math.random()*100+"vw";
+    h.style.bottom="0";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),3000);
+ }
+}
+
+// FULLSCREEN
+function openFullscreen(){
+ const fs=document.createElement("div");
+ fs.style.position="fixed";
+ fs.style.inset=0;
+ fs.style.background="rgba(0,0,0,.9)";
+ fs.style.display="flex";
+ fs.style.justifyContent="center";
+ fs.style.alignItems="center";
+ fs.onclick=()=>fs.remove();
+
+ const img=document.createElement("img");
+ img.src=this.src;
+ img.style.maxWidth="90%";
+ img.style.maxHeight="90%";
+ img.style.borderRadius="15px";
+
+ fs.appendChild(img);
+ document.body.appendChild(fs);
+}
+</script>
+
+</body>
+</html>
